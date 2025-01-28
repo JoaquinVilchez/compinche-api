@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15
+    container_name: compinche-api_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: compinche_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - compinche-api_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: compinche-api_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - compinche-api_network
+    depends_on:
+      - db
+    volumes:
+      - .:/compinche-api
+      - /compinche-api/node_modules
+
+volumes:
+  pgdata:
+
+networks:
+  compinche-api_network:
